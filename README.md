@@ -6,24 +6,35 @@ Creates a sliding window of signals.
 Examples
 --------
 
+Basic Usage:
+
 ```text
 { min_signals = 1, max_signals = 3 }
+
 input:  ----1------2--------3--------4--------5-->
 output: ----•------•--------•--------•--------•-->
           [1]  [1,2]  [1,2,3]  [2,3,4]  [3,4,5]
+```
 
+Setting `min_signals`:
 
+```text
 { min_signals = 3, max_signals = 3 }
+
 input:  ----1------2--------3--------4--------5-->
 output: --------------------•--------•--------•-->
                       [1,2,3]  [2,3,4]  [3,4,5]
+```
 
 
+Using an `expiration`:
+
+```text
 { min_signals = 1, max_signals = 3, expiration: { millseconds: 500 } }
+
 input:  ----1------2--------3--------4--| >500ms |---5-->
 output: ----•------•--------•--------•--|        |---•-->
           [1]  [1,2]  [1,2,3]  [2,3,4]             [5]
-
 ```
 
 Properties
