@@ -1,39 +1,42 @@
 {
-  "namespace/BlockName": {
-    "version": "1.0.0",
-    "description": "Description of the block.",
+  "nio/SlidingWindow": {
+    "version": "0.0.1",
+    "description": "",
+    "categories": [
+      "Signal Modifier"
+    ],
     "properties": {
-      "<property1>": {
-        "description": "Required description of the property"
+      "min_signals": {
+        "title": "Minimum signals",
+        "type": "IntType",
+        "description": "The minimum number of signals required in the sliding window before notifying.",
       },
-      "<property2>": {
-        "default": "Optional metadata with any key.",
-        "description": "Required description of the property"
-      }
+      "max_signals": {
+        "title": "Maximum signals",
+        "type": "IntType",
+        "description": "The maximum number of signals that. Any new signals will remove the eldest signal from the window.",
+      },
+      "expiration": {
+        "title": "Window Expiration",
+        "type": "TimeDeltaType",
+        "description": "Length of time to keep the current window before dropping it.",
+        "default": {}
+      },
     },
     "inputs": {
-      "<input1 | default>": {
-        "description": "Required description of the input"
+      "default": {
+        "description": "Any list of signals."
       },
-      "<input2>": {
-        "description": "Required description of the input"
-      }
     },
     "outputs": {
-      "<output1 | default>": {
-        "description": "Required description of the output"
-      },
-      "<output2>": {
-        "description": "Required description of the output"
+      "default": {
+        "description": "The window of signals."
       }
     },
     "commands": {
-      "<command1>": {
-        "description": "Required description of the command",
-        "type": "Optional type and other metadata with any key."
-      },
-      "<command2>": {
-        "description": "Required description of the command"
+      "expire": {
+        "description": "Empty the current window.",
+        "params": {}
       }
     }
   }
