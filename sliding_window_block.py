@@ -2,11 +2,13 @@ from collections import defaultdict
 from datetime import datetime
 
 from nio.block.base import Block
-from nio.properties import IntProperty, VersionProperty, TimeDeltaProperty
+from nio.block.mixins.group_by.group_by import GroupBy
+from nio.properties import IntProperty, VersionProperty, TimeDeltaProperty, \
+    StringProperty
 from nio.command import command
 
 @command("expire")
-class SlidingWindow(Block):
+class SlidingWindow(GroupBy, Block):
     """Creates a sliding window of signals.
 
     Examples:
@@ -38,33 +40,33 @@ class SlidingWindow(Block):
 
     version = VersionProperty("0.0.1")
     min_signals = IntProperty(default=1, title='Min Signals')
-    max_signals = IntProperty(title='Max Signals')
+    max_signals = IntProperty(default=20, title='Max Signals')
     expiration = TimeDeltaProperty(title='Window Expiration',
                                    allow_none=True)
 
     def __init__(self):
         super().__init__()
-        self.buffer = []
-        self._last_recv = datetime.min
+        self._buffers = defaultdict(list)
+        self._last_recv = defaultdict(lambda : datetime.min)
 
     def expire(self):
         self.logger.debug('Clearing the buffer window')
-        self.buffer.clear()
+        self._buffers.clear()
 
-    def process_signals(self, signals):
+    def process_group_signals(self, signals, group, input_id=None):
         now = datetime.utcnow()
 
         hasExpiration = self.expiration() is not None
-        if hasExpiration and (self._last_recv + self.expiration()) < now:
+        if hasExpiration and (self._last_recv[group] + self.expiration()) < now:
             self.logger.debug('The buffer window has expired')
-            self.buffer.clear()
+            self._buffers[group].clear()
 
-        self._last_recv = now
+        self._last_recv[group] = now
 
         for signal in signals:
-            self.buffer.append(signal)
+            self._buffers[group].append(signal)
 
-        del self.buffer[:-self.max_signals()]
+        del self._buffers[group][:-self.max_signals()]
 
-        if len(self.buffer) >= self.min_signals():
-            self.notify_signals(self.buffer)
+        if len(self._buffers[group]) >= self.min_signals():
+            return self._buffers[group]
