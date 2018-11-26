@@ -1,5 +1,3 @@
-print(__name__)
-
 from time import sleep
 
 from nio.block.terminals import DEFAULT_TERMINAL
@@ -69,15 +67,17 @@ class TestSlidingWindow(NIOBlockTestCase):
         first = Signal()
         marker = Signal()
         block.process_signals([Signal(), Signal(), Signal(), marker])
-        self.assertTrue(self.last_notified[DEFAULT_TERMINAL][3] is marker)
+        self.assertTrue(
+            self.last_notified[DEFAULT_TERMINAL][-4:][-1] is marker)
         block.process_signals([Signal()])
-        self.assertTrue(self.last_notified[DEFAULT_TERMINAL][2] is marker)
+        self.assertTrue(self.last_notified[DEFAULT_TERMINAL][-4:][2] is marker)
         block.process_signals([Signal()])
-        self.assertTrue(self.last_notified[DEFAULT_TERMINAL][1] is marker)
+        self.assertTrue(self.last_notified[DEFAULT_TERMINAL][-4:][1] is marker)
         block.process_signals([Signal()])
-        self.assertTrue(self.last_notified[DEFAULT_TERMINAL][0] is marker)
+        self.assertTrue(self.last_notified[DEFAULT_TERMINAL][-4:][0] is marker)
         block.process_signals([Signal()])
-        self.assertTrue(self.last_notified[DEFAULT_TERMINAL][0] is not marker)
+        self.assertTrue(
+            self.last_notified[DEFAULT_TERMINAL][-4:][0] is not marker)
 
     def test_min_expiration(self):
         block = SlidingWindow()

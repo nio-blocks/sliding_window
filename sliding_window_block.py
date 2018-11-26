@@ -33,16 +33,16 @@ class SlidingWindow(GroupBy, Block):
 
     """TODO
     - [x] Window Expriation
-    - [ ] Implement Group
+    - [x] Implement Group
     - [ ] Implement Persistence
-    - [ ] Use Signal Expiration
+    - [x] Use Signal Expiration
     """
 
-    version = VersionProperty("0.0.1")
+    version = VersionProperty("0.1.0")
     min_signals = IntProperty(default=1, title='Min Signals')
     max_signals = IntProperty(default=20, title='Max Signals')
     expiration = TimeDeltaProperty(title='Window Expiration',
-                                   allow_none=True)
+                                   default={'seconds': 0})
 
     def __init__(self):
         super().__init__()
@@ -56,8 +56,9 @@ class SlidingWindow(GroupBy, Block):
     def process_group_signals(self, signals, group, input_id=None):
         now = datetime.utcnow()
 
-        hasExpiration = self.expiration() is not None
-        if hasExpiration and (self._last_recv[group] + self.expiration()) < now:
+        hasExpiration = bool(self.expiration())
+        isExpired = (self._last_recv[group] + self.expiration()) < now
+        if hasExpiration and isExpired:
             self.logger.debug('The buffer window has expired')
             self._buffers[group].clear()
 
