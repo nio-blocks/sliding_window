@@ -1,7 +1,7 @@
 {
   "nio/SlidingWindow": {
     "language": "Python",
-    "version": "0.0.1",
-    "reference": "github.com/32bitkid/sliding_window@v0.0.1"
+    "from_python": "sliding_window_block.SlidingWindow",
+    "url": "git://github.com/nio-blocks/sliding_window.git"
   }
 }

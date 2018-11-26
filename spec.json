@@ -1,43 +1,11 @@
 {
   "nio/SlidingWindow": {
-    "version": "0.0.1",
-    "description": "",
+    "description": "Create a trailing history from a stream of signals.",
     "categories": [
       "Signal Modifier"
     ],
-    "properties": {
-      "min_signals": {
-        "title": "Minimum signals",
-        "type": "IntType",
-        "description": "The minimum number of signals required in the sliding window before notifying.",
-      },
-      "max_signals": {
-        "title": "Maximum signals",
-        "type": "IntType",
-        "description": "The maximum number of signals that. Any new signals will remove the eldest signal from the window.",
-      },
-      "expiration": {
-        "title": "Window Expiration",
-        "type": "TimeDeltaType",
-        "description": "Length of time to keep the current window before dropping it.",
-        "default": {}
-      },
-    },
-    "inputs": {
-      "default": {
-        "description": "Any list of signals."
-      },
-    },
-    "outputs": {
-      "default": {
-        "description": "The window of signals."
-      }
-    },
-    "commands": {
-      "expire": {
-        "description": "Empty the current window.",
-        "params": {}
-      }
-    }
+    "tags": "queue buffer trailing history",
+    "from_readme": "docs/sliding_window.md",
+    "from_python": "sliding_window_block.SlidingWindow"
   }
 }
