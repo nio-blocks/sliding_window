@@ -38,11 +38,11 @@ class SlidingWindow(GroupBy, Block):
     - [x] Use Signal Expiration
     """
 
-    version = VersionProperty("0.1.0")
+    version = VersionProperty('0.1.0')
     min_signals = IntProperty(default=1, title='Min Signals')
     max_signals = IntProperty(default=20, title='Max Signals')
-    expiration = TimeDeltaProperty(title='Window Expiration',
-                                   default={'seconds': 0})
+    expiration = TimeDeltaProperty(default={'seconds': 0},
+                                   title='Window Expiration')
 
     def __init__(self):
         super().__init__()
