@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime
+from time import monotonic
 
 from nio.block.base import Block
 from nio.block.mixins.group_by.group_by import GroupBy
@@ -48,22 +48,20 @@ class SlidingWindow(GroupBy, Block):
     def __init__(self):
         super().__init__()
         self._buffers = defaultdict(list)
-        self._last_recv = defaultdict(lambda : datetime.min)
+        self._last_recv = defaultdict(lambda : monotonic())
 
     def expire(self):
         self.logger.debug('Clearing the buffer window')
         self._buffers.clear()
 
     def process_group_signals(self, signals, group, input_id=None):
-        now = datetime.utcnow()
-
         hasExpiration = self.expiration().total_seconds() >= 0
-        isExpired = (self._last_recv[group] + self.expiration()) < now
+        isExpired = self._last_recv[group] > self.expiration().total_seconds()
         if hasExpiration and isExpired:
             self.logger.debug('The buffer window has expired')
             self._buffers[group].clear()
 
-        self._last_recv[group] = now
+        self._last_recv[group] = monotonic()
 
         for signal in signals:
             self._buffers[group].append(signal)
