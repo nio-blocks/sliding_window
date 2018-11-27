@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime
+from time import monotonic
 
 from nio.block.base import Block
 from nio.block.mixins.group_by.group_by import GroupBy
@@ -33,31 +33,34 @@ class SlidingWindow(GroupBy, Block):
 
     """TODO
     - [x] Window Expriation
-    - [ ] Implement Group
+    - [x] Implement Group
     - [ ] Implement Persistence
-    - [ ] Use Signal Expiration
+    - [x] Use Signal Expiration
     """
 
-    version = VersionProperty("0.0.1")
+    version = VersionProperty('0.1.0')
     min_signals = IntProperty(default=1, title='Min Signals')
     max_signals = IntProperty(default=20, title='Max Signals')
-    expiration = TimeDeltaProperty(title='Window Expiration',
-                                   allow_none=True)
+    expiration = TimeDeltaProperty(default={'seconds': -1},
+                                   title='Window Expiration',
+                                   advanced=True)
 
     def __init__(self):
         super().__init__()
         self._buffers = defaultdict(list)
-        self._last_recv = defaultdict(lambda : datetime.min)
+        self._last_recv = defaultdict(lambda : monotonic())
 
     def expire(self):
         self.logger.debug('Clearing the buffer window')
         self._buffers.clear()
 
     def process_group_signals(self, signals, group, input_id=None):
-        now = datetime.utcnow()
-
-        hasExpiration = self.expiration() is not None
-        if hasExpiration and (self._last_recv[group] + self.expiration()) < now:
+        now = monotonic()
+        delta = now - self._last_recv[group]
+        window = self.expiration().total_seconds()
+        has_expiration = window >= 0
+        is_expired = delta > window or window == 0
+        if has_expiration and is_expired:
             self.logger.debug('The buffer window has expired')
             self._buffers[group].clear()
 
