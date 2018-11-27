@@ -55,13 +55,16 @@ class SlidingWindow(GroupBy, Block):
         self._buffers.clear()
 
     def process_group_signals(self, signals, group, input_id=None):
-        hasExpiration = self.expiration().total_seconds() >= 0
-        isExpired = self._last_recv[group] > self.expiration().total_seconds()
+        now = monotonic()
+        delta = now - self._last_recv[group]
+        window = self.expiration().total_seconds()
+        hasExpiration = window >= 0
+        isExpired = delta > window or window == 0
         if hasExpiration and isExpired:
             self.logger.debug('The buffer window has expired')
             self._buffers[group].clear()
 
-        self._last_recv[group] = monotonic()
+        self._last_recv[group] = now
 
         for signal in signals:
             self._buffers[group].append(signal)
