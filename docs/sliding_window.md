@@ -7,7 +7,9 @@ Properties
 --------------
 - **Min Signals**: Minimum number of signals before the window emits.
 - **Max Signals**: Maximum number of signals to emit.
-- **Window Expiration**: The amount of time the window stays open. After which, if no signals are recieved, then the window is emptied.
+Advanced Properties
+-------------------
+- **Window Expiration**: The amount of time the window stays open. After which, if no signals are recieved, then the window is emptied. If configured with a negative value (default), the window never expires. A zero value means that all signals expire immediately.
 
 Examples
 --------
