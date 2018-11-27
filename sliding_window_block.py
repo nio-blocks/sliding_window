@@ -58,9 +58,9 @@ class SlidingWindow(GroupBy, Block):
         now = monotonic()
         delta = now - self._last_recv[group]
         window = self.expiration().total_seconds()
-        hasExpiration = window >= 0
-        isExpired = delta > window or window == 0
-        if hasExpiration and isExpired:
+        has_expiration = window >= 0
+        is_expired = delta > window or window == 0
+        if has_expiration and is_expired:
             self.logger.debug('The buffer window has expired')
             self._buffers[group].clear()
 
