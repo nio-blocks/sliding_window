@@ -93,3 +93,16 @@ class TestSlidingWindow(NIOBlockTestCase):
         sleep(.3)
         block.process_signals([Signal()])
         self.assert_num_signals_notified(5, block)
+
+    def test_zero_expiration(self):
+        block = SlidingWindow()
+        self.configure_block(block, {
+            "min_signals": 1,
+            "max_signals": 2,
+            "expiration": {"seconds": 0}
+        })
+        block.start()
+        block.process_signals([Signal])
+        self.assert_num_signals_notified(1, block)
+        block.process_signals([Signal()])
+        self.assert_num_signals_notified(2, block)
