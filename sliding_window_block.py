@@ -32,13 +32,6 @@ class SlidingWindow(GroupBy, Persistence, Block):
               [1]  [1,2]  [1,2,3]  [2,3,4]             [5]
     """
 
-    """TODO
-    - [x] Window Expriation
-    - [x] Implement Group
-    - [ ] Implement Persistence
-    - [x] Use Signal Expiration
-    """
-
     min_signals = IntProperty(default=1, title='Min Signals')
     max_signals = IntProperty(default=20, title='Max Signals')
 
