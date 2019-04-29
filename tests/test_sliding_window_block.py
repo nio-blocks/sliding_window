@@ -1,10 +1,12 @@
+from collections import defaultdict
 from time import sleep
 
+from nio import Signal
 from nio.block.terminals import DEFAULT_TERMINAL
-from nio.signal.base import Signal
 from nio.testing.block_test_case import NIOBlockTestCase
 
 from ..sliding_window_block import SlidingWindow
+
 
 class TestSlidingWindow(NIOBlockTestCase):
 
@@ -107,3 +109,33 @@ class TestSlidingWindow(NIOBlockTestCase):
         self.assert_num_signals_notified(1, block)
         block.process_signals([Signal()])
         self.assert_num_signals_notified(2, block)
+
+    def test_persistence(self):
+        block = SlidingWindow()
+        self.configure_block(block, {
+            'id': 'test_block',  # assign an id so it can be loaded
+        })
+
+        block.start()
+        block.process_signals([Signal({'foo': 'bar'})])
+        self.assert_last_signal_list_notified([
+            Signal({'foo': 'bar'}),
+        ])
+        block.stop()
+
+        block = SlidingWindow()
+        self.configure_block(block, {
+            'id': 'test_block',  # assign an id so it can be loaded
+        })
+
+        block.start()
+        block.process_signals([Signal({'foo': 'baz'})])
+        self.assert_last_signal_list_notified([
+            Signal({'foo': 'bar'}),
+            Signal({'foo': 'baz'}),
+        ])
+        block.stop()
+
+        # verify persisted items are defaultdicts
+        self.assertTrue(isinstance(block._buffers, defaultdict))
+        self.assertTrue(isinstance(block._last_recv, defaultdict))

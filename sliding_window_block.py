@@ -1,14 +1,15 @@
 from collections import defaultdict
 from time import monotonic
 
-from nio.block.base import Block
-from nio.block.mixins.group_by.group_by import GroupBy
+from nio import Block, Signal
+from nio.block.mixins import GroupBy, Persistence
 from nio.properties import IntProperty, VersionProperty, TimeDeltaProperty, \
     StringProperty
 from nio.command import command
 
+
 @command('expire')
-class SlidingWindow(GroupBy, Block):
+class SlidingWindow(GroupBy, Persistence, Block):
     """Creates a sliding window of signals.
 
     Examples:
@@ -49,11 +50,14 @@ class SlidingWindow(GroupBy, Block):
     def __init__(self):
         super().__init__()
         self._buffers = defaultdict(list)
-        self._last_recv = defaultdict(lambda : monotonic())
+        self._last_recv = defaultdict(lambda: monotonic())
 
     def expire(self):
         self.logger.debug('Clearing the buffer window')
         self._buffers.clear()
+
+    def persisted_values(self):
+        return ['_buffers', '_last_recv']
 
     def process_group_signals(self, signals, group, input_id=None):
         now = monotonic()
