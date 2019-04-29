@@ -124,7 +124,7 @@ class TestSlidingWindow(NIOBlockTestCase):
 
         block = SlidingWindow()
         self.configure_block(block, {
-            'id': 'test_block',  # assign an id so it can be loaded
+            'id': 'test_block',  # load the same block instance
         })
 
         block.start()
