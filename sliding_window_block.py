@@ -7,7 +7,7 @@ from nio.properties import IntProperty, VersionProperty, TimeDeltaProperty, \
     StringProperty
 from nio.command import command
 
-@command("expire")
+@command('expire')
 class SlidingWindow(GroupBy, Block):
     """Creates a sliding window of signals.
 
@@ -38,12 +38,13 @@ class SlidingWindow(GroupBy, Block):
     - [x] Use Signal Expiration
     """
 
-    version = VersionProperty('0.1.0')
     min_signals = IntProperty(default=1, title='Min Signals')
     max_signals = IntProperty(default=20, title='Max Signals')
+
     expiration = TimeDeltaProperty(default={'seconds': -1},
                                    title='Window Expiration',
                                    advanced=True)
+    version = VersionProperty('0.1.0')
 
     def __init__(self):
         super().__init__()
