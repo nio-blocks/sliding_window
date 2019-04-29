@@ -38,7 +38,7 @@ class SlidingWindow(GroupBy, Persistence, Block):
     expiration = TimeDeltaProperty(default={'seconds': -1},
                                    title='Window Expiration',
                                    advanced=True)
-    version = VersionProperty('0.1.0')
+    version = VersionProperty('0.2.0')
 
     def __init__(self):
         super().__init__()
