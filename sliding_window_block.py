@@ -50,7 +50,7 @@ class SlidingWindow(GroupBy, Persistence, Block):
         self._buffers.clear()
 
     def persistence_serialize(self):
-        return {group: items for group, items in self._buffers.items()}
+        return self._buffers
 
     def persistence_deserialize(self, data):
         # load all persisted signals and set last_recv to now
