@@ -1,4 +1,3 @@
-from collections import defaultdict
 from time import sleep
 
 from nio import Signal
@@ -135,7 +134,3 @@ class TestSlidingWindow(NIOBlockTestCase):
             Signal({'foo': 'baz'}),
         ])
         block.stop()
-
-        # verify persisted items are defaultdicts
-        self.assertTrue(isinstance(block._buffers, defaultdict))
-        self.assertTrue(isinstance(block._last_recv, defaultdict))
