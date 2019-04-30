@@ -54,8 +54,9 @@ class SlidingWindow(GroupBy, Persistence, Block):
 
     def persistence_deserialize(self, data):
         # load all persisted signals and set last_recv to now
+        now = monotonic()
         for group, buffer in data.items():
-            self._last_recv[group] = monotonic()
+            self._last_recv[group] = now
             for item in buffer:
                 if isinstance(item, Signal):
                     self._buffers[group].append(item)
